@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+  app:
+    container_name: app
+    build: .
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - db
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - "3001:3000"
+
+  db:
+    container_name: db
+    image: postgres:14.2-alpine
+    restart: always
+    volumes:
+      - ./docker/postgres/init.d:/docker-entrypoint-initdb.d
+      - ./docker/postgres/pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: game-admin
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: secret
+      TZ: "Asia/Tokyo"
+    ports:
+      - "5432:5432"
+
+  db-gui:
+    container_name: db-gui
+    image: dpage/pgadmin4
+    volumes:
+      - ./docker/pgadmin:/var/lib/pgadmin
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: email@email.com
+      PGADMIN_DEFAULT_PASSWORD: pw
+    ports:
+      - "80:80"
