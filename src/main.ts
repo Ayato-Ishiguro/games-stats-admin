@@ -12,6 +12,7 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  // 自身の環境に合わせて変更する
   await app.listen(3000, '0.0.0.0');
 }
 bootstrap();
